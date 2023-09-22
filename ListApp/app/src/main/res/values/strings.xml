@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">ListApp</string>
+    <string name="name">Name</string>
+    <string name="textview">TextView</string>
+    <string name="price">Price</string>
+    <string name="itemPrice">Price</string>
+    <string-array name="items">
+        <item>Peach</item>
+        <item>Tomato</item>
+        <item>squash</item>
+    </string-array>
+
+    <string-array name="prices">
+        <item>0.99€</item>
+        <item>1.49€</item>
+        <item>0.89€</item>
+    </string-array>
+
+    <string-array name="descriptions">
+        <item>Fresh Spanish peach!</item>
+        <item>Fresh Andalusian Tomatoes!</item>
+        <item>Fresh Yellow Squash from our neighbor</item>
+    </string-array>
+
+</resources>
