@@ -2,4 +2,10 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="table_color">#3C3939</color>
+    <color name="player_color">#FFC107</color>
+    <color name="opponent_color">#13CBE4</color>
+    <color name="ball_color">#FFFFFF</color>
+
 </resources>
