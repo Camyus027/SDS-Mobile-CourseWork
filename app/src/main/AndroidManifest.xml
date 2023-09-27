@@ -13,7 +13,16 @@
         android:theme="@style/Theme.Pong2DGame"
         tools:targetApi="31">
         <activity
+            android:name=".PongActivity"
+            android:theme="@style/Theme.Pong2DGame"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="sensorLandscape"
+            android:exported="false" />
+        <activity
             android:name=".GameActivity"
+            android:theme="@style/Theme.Pong2DGame"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="sensorLandscape"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
