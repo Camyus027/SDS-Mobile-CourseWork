@@ -179,6 +179,25 @@ public class PongTable extends SurfaceView implements SurfaceHolder.Callback{
 
     }
 
+    public void setUpTable(){
+        placeBall();
+        placePlayers();
+    }
+
+    private void placePlayers(){
+        mainPlayer.adjustBounds(2,(tableHeight-mainPlayer.getRacquetHeight()) /2);
+        opponent.adjustBounds(tableWidth-opponent.getRacquetWidth() - 2,
+                (tableHeight - opponent.getRacquetHeight()) /2);
+
+    }
+
+    private void placeBall(){
+        ball.setCoordinate_x(tableWidth/2);
+        ball.setCoordinate_y(tableHeight/2);
+        ball.setVelocity_y(ball.getVelocity_y() / Math.abs(ball.getVelocity_y()) * PHY_BALL_SPEED);
+        ball.setVelocity_x(ball.getVelocity_x() / Math.abs(ball.getVelocity_x()) * PHY_BALL_SPEED);
+    }
+
     /* GETTERS AND SETTERS */
 
     public Player getMainPlayer() {
