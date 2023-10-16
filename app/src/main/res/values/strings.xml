@@ -3,5 +3,9 @@
     <string name="start_game">Start Game</string>
     <string name="opponent">OPPONENT</string>
     <string name="player">PLAYER</string>
-    <string name="ready">Ready!</string>
+    <string name="state">Ready!</string>
+
+    <string name="mode_win"> You Won ^^</string>
+    <string name="mode_lose"> You Lost :(</string>
+    <string name="mode_paused"> Paused</string>
 </resources>

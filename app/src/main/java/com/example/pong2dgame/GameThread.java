@@ -97,16 +97,23 @@ public class GameThread extends Thread{
 
             switch (gameState){
                 case STATE_READY:
-                    // set up new round
+                    setUpNewRound();
                     break;
                 case STATE_RUNNING:
-                    // hideStatus()
+                    hideStatusText();
                     break;
                 case STATE_PAUSED:
+                    setStatusText(res.getString(R.string.mode_paused));
                     break;
                 case STATE_WIN:
+                    setStatusText(res.getString(R.string.mode_win));
+                    pongTable.getMainPlayer().setScore(pongTable.getMainPlayer().getScore() + 1);
+                    setUpNewRound();
                     break;
                 case STATE_LOSE:
+                    setStatusText(res.getString(R.string.mode_lose));
+                    pongTable.getOpponent().setScore(pongTable.getOpponent().getScore() +1);
+                    setUpNewRound();
                     break;
             }
         }
