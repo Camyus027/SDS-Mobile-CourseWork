@@ -15,6 +15,8 @@ public class Ball {
     public Ball(int radius, Paint paint) {
         this.paint = paint;
         this.radius = radius;
+        this.velocity_x = PongTable.getPhyBallSpeed();
+        this.velocity_y = PongTable.getPhyBallSpeed();
     }
 
     public void draw(Canvas canvas){

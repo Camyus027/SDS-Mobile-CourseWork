@@ -35,6 +35,10 @@ public class Player {
                 ;
     }
 
+    public void adjustBounds(float left, float top){
+        this.bounds.offsetTo(left, top);
+    }
+
     /* GETTERS AND SETTERS */
 
     public String getName() {
