@@ -8,4 +8,7 @@
     <string name="mode_win"> You Won ^^</string>
     <string name="mode_lose"> You Lost :(</string>
     <string name="mode_paused"> Paused</string>
+    <string name="designed_by_laura_mar_a_camino_yuste">Designed by: Laura María Camino Yuste</string>
+    <string name="_2d_pong_game">2D PONG GAME</string>
+    <string name="play_game">Play Game</string>
 </resources>
