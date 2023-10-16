@@ -139,7 +139,7 @@ public class PongTable extends SurfaceView implements SurfaceHolder.Callback{
         game.setScoreText(String.valueOf(mainPlayer.getScore()),
                 String.valueOf(opponent.getScore()));
 
-        
+
         mainPlayer.draw(canvas);
         opponent.draw(canvas);
         ball.draw(canvas);
@@ -193,14 +193,61 @@ public class PongTable extends SurfaceView implements SurfaceHolder.Callback{
 
     public void update(Canvas canvas) {
 
-        // Collisions detetion code
+        // Collisions detection code
 
+        if (checkPlayerCollision(mainPlayer, ball)){
+            handleCollisions(mainPlayer, ball);
+        } else if (checkPlayerCollision(opponent, ball)) {
+            handleCollisions(opponent, ball);
+        } else if (checkCollisionTopBottomWalls()) {
+            ball.setVelocity_y(-ball.getVelocity_y());
+        } else if (checkCollisionsLefttWall()) {
+            // A ball collides in our field
+            game.setGameState(GameThread.STATE_LOSE);
+            return;
+        } else if (checkCollisionsRightWall()) {
+            // We get a point!
+            game.setGameState(GameThread.STATE_WIN);
+            return;
+        }
 
 
         if (new Random(System.currentTimeMillis()).nextFloat() < AiProbability){
             doAi();
         }
         ball.moveBall(canvas);
+    }
+
+    public boolean checkPlayerCollision(Player player, Ball ball){
+        return player.getBounds().intersects(
+                ball.getCoordinate_x() -ball.getRadius(),
+                ball.getCoordinate_y() - ball.getRadius(),
+                ball.getCoordinate_x() + ball.getRadius(),
+                ball.getCoordinate_y() + ball.getRadius()
+        );
+    }
+
+    public boolean checkCollisionTopBottomWalls(){
+        return ((ball.getCoordinate_y() <= ball.getRadius()) ||
+                (ball.getCoordinate_y() + ball.getRadius() >= tableHeight -1));
+    }
+
+    public boolean checkCollisionsLefttWall(){
+        return ball.getCoordinate_x() <= ball.getRadius();
+    }
+
+    public boolean checkCollisionsRightWall(){
+        return ball.getCoordinate_x() + ball.getRadius() >= tableWidth - 1;
+    }
+
+    private void handleCollisions(Player player, Ball ball){
+        ball.setVelocity_x(-ball.getVelocity_x() * 1.05f);
+        if (player == mainPlayer){
+            ball.setCoordinate_x(mainPlayer.getBounds().right + ball.getRadius());
+        }else{
+            ball.setCoordinate_x(opponent.getBounds().left - ball.getRadius());
+            PHY_RACQUET_SPEED = PHY_RACQUET_SPEED * 1.03f;
+        }
     }
 
     @Override
