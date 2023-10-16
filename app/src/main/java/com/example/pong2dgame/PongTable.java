@@ -136,6 +136,10 @@ public class PongTable extends SurfaceView implements SurfaceHolder.Callback{
         int middle = tableWidth/2;
         canvas.drawLine(middle, 1, middle, tableHeight - 1, netPaint);
 
+        game.setScoreText(String.valueOf(mainPlayer.getScore()),
+                String.valueOf(opponent.getScore()));
+
+        
         mainPlayer.draw(canvas);
         opponent.draw(canvas);
         ball.draw(canvas);

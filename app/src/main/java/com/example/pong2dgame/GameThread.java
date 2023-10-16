@@ -145,7 +145,7 @@ public class GameThread extends Thread{
         gameStatusHandler.sendMessage(message);
     }
 
-    public void setScoreMethod(String playerScore, String opponentScore){
+    public void setScoreText(String playerScore, String opponentScore){
         Message message = scoreHandler.obtainMessage();
         Bundle bundle = new Bundle();
         bundle.putString("player", playerScore);
