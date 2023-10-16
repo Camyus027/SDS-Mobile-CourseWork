@@ -290,6 +290,7 @@ public class PongTable extends SurfaceView implements SurfaceHolder.Callback{
         ball.setVelocity_x(ball.getVelocity_x() / Math.abs(ball.getVelocity_x()) * PHY_BALL_SPEED);
     }
 
+
     public void setScorePlayer(TextView view){
         playerScore = view;
     }

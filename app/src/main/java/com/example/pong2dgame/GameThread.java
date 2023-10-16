@@ -3,10 +3,12 @@ package com.example.pong2dgame;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
+import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.os.SystemClock;
 import android.view.SurfaceHolder;
-
+import android.view.View;
 
 
 public class GameThread extends Thread{
@@ -126,7 +128,31 @@ public class GameThread extends Thread{
         return gameState != STATE_RUNNING;
     }
 
+    private void setStatusText(String text){
+        Message message = gameStatusHandler.obtainMessage();
+        Bundle bundle = new Bundle();
+        bundle.putString("text", text);
+        bundle.putInt("visibility", View.VISIBLE);
+        message.setData(bundle);
+        gameStatusHandler.sendMessage(message);
+    }
 
+    private void hideStatusText(){
+        Message message = gameStatusHandler.obtainMessage();
+        Bundle bundle =  new Bundle();
+        bundle.putInt("visibility", View.INVISIBLE);
+        message.setData(bundle);
+        gameStatusHandler.sendMessage(message);
+    }
+
+    public void setScoreMethod(String playerScore, String opponentScore){
+        Message message = scoreHandler.obtainMessage();
+        Bundle bundle = new Bundle();
+        bundle.putString("player", playerScore);
+        bundle.putString("opponent", opponentScore);
+        message.setData(bundle);
+        scoreHandler.sendMessage(message);
+    }
 
     /* GETTERS AND SETTERS */
 
