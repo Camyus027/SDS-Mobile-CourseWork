@@ -19,8 +19,6 @@ public class GameThread extends Thread{
     public static final int STATE_RUNNING = 2;
     public static final int STATE_WIN = 3;
     public static final int STATE_LOSE = 4;
-
-    private boolean sensorsOn;
     private final Context mainContext;
     private final SurfaceHolder surfaceHolder;
     private final PongTable pongTable;
@@ -29,9 +27,17 @@ public class GameThread extends Thread{
 
     private boolean run = false;
     private int gameState;
-    private Object runLock;
+    private final Object runLock;
     private static final int PHYSICS_FPS = 60;
 
+    /**
+     * Main constructor of the Game Thread
+     * @param mainContext actual context in which we are working
+     * @param surfaceHolder surface in which we are working
+     * @param pongTable Table of the game
+     * @param gameStatusHandler handler for the status of the game
+     * @param scoreHandler handler to keep track of the score
+     */
     public GameThread(Context mainContext, SurfaceHolder surfaceHolder, PongTable pongTable,
                       Handler gameStatusHandler, Handler scoreHandler) {
         this.mainContext = mainContext;
@@ -44,6 +50,12 @@ public class GameThread extends Thread{
     }
 
 
+    /**
+     * This method is activated when the Thread is set to run.
+     * It calculates a the games ticks to ensure that the graphics works properly
+     * independent of the device.
+     * It also update the canvas which the needed information as long as the game is running
+     */
     @Override
     public void run() {
         long nextGameTick = SystemClock.uptimeMillis();
@@ -73,7 +85,6 @@ public class GameThread extends Thread{
                     surfaceHolder.unlockCanvasAndPost(canvas);
                 }
             }
-
             // To ensure that the game can run in any system, independent of its speed:
             nextGameTick += skipTicks;
             long sleepTime = nextGameTick - SystemClock.uptimeMillis();
@@ -90,6 +101,15 @@ public class GameThread extends Thread{
 
     }
 
+    /**
+     * It update the status of the game depending on the value received.
+     * If the game is ready to be play it setUp the next round.
+     * If the game is already running it hides the status code.
+     * If the player have won a round it update the score, prepares next round and shows a message
+     * If the player have lost a round it update the score, prepares next round and shows a message
+     * If the game have been paused by any reason, like an incoming call, it shows it on the screen
+     * @param state code to know in which state the system is
+     */
     public void setState(int state){
         synchronized (surfaceHolder){
             gameState = state;
@@ -119,22 +139,36 @@ public class GameThread extends Thread{
         }
     }
 
+    /**
+     * It prepares the table for the next round
+     */
     public void setUpNewRound(){
         synchronized (surfaceHolder){
             pongTable.setUpTable();
         }
     }
 
+    /**
+     * It update the variable that determine whether the game is running or not
+     * @param running boolean to know if the game is running or not
+     */
     public void setRunning(boolean running){
         synchronized (runLock){
             run = running;
         }
     }
 
+    /**
+     * @return if we are in the middle of a round or if a new run have started
+     */
     public boolean isBetweenRounds(){
         return gameState != STATE_RUNNING;
     }
 
+    /**
+     * It updates the text message in the screen
+     * @param text message to be displayed
+     */
     private void setStatusText(String text){
         Message message = gameStatusHandler.obtainMessage();
         Bundle bundle = new Bundle();
@@ -144,6 +178,9 @@ public class GameThread extends Thread{
         gameStatusHandler.sendMessage(message);
     }
 
+    /**
+     * It hides the status message when needed
+     */
     private void hideStatusText(){
         Message message = gameStatusHandler.obtainMessage();
         Bundle bundle =  new Bundle();
@@ -152,6 +189,11 @@ public class GameThread extends Thread{
         gameStatusHandler.sendMessage(message);
     }
 
+    /**
+     * It sets the score in the screen
+     * @param playerScore score of the player
+     * @param opponentScore score of the opponent
+     */
     public void setScoreText(String playerScore, String opponentScore){
         Message message = scoreHandler.obtainMessage();
         Bundle bundle = new Bundle();
@@ -159,11 +201,5 @@ public class GameThread extends Thread{
         bundle.putString("opponent", opponentScore);
         message.setData(bundle);
         scoreHandler.sendMessage(message);
-    }
-
-    /* GETTERS AND SETTERS */
-
-    public boolean isSensorsOn() {
-        return sensorsOn;
     }
 }

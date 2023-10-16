@@ -3,15 +3,22 @@ package com.example.pong2dgame;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
+import androidx.annotation.NonNull;
+
 public class Ball {
     private float coordinate_x;
     private float coordinate_y;
     private float velocity_x;
     private float velocity_y;
 
-    private int radius;
-    private Paint paint; //To paint the ball in the screen
+    private final int radius;
+    private final Paint paint; //To paint the ball in the screen
 
+    /**
+     * Constructor of the ball
+     * @param radius desire radius of the ball
+     * @param paint Paint object in which to base the ball properties
+     */
     public Ball(int radius, Paint paint) {
         this.paint = paint;
         this.radius = radius;
@@ -19,10 +26,18 @@ public class Ball {
         this.velocity_y = PongTable.getPhyBallSpeed();
     }
 
+    /**
+     * Draw the ball in the canvas according to its measures
+     * @param canvas canvas in which the ball must be painted
+     */
     public void draw(Canvas canvas){
         canvas.drawCircle(coordinate_x, coordinate_y, radius, paint);
     }
 
+    /**
+     * Method in charge of ensuring the ball movement within the limits
+     * @param canvas canvas in which the ball must be painted
+     */
     public void moveBall(Canvas canvas){
         coordinate_x += velocity_x;
         coordinate_y += velocity_y;
@@ -35,6 +50,7 @@ public class Ball {
         }
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "Coordinate X " + coordinate_x

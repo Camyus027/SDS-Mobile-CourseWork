@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 public class PongActivity extends AppCompatActivity {
 
-    private GameThread gameThread;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -17,9 +17,6 @@ public class PongActivity extends AppCompatActivity {
         table.setOpponentScore((TextView) findViewById(R.id.tvScoreOpponent));
         table.setScorePlayer((TextView) findViewById(R.id.tvScorePlayer));
         table.setStatusView((TextView) findViewById(R.id.tvGameStatus));
-
-        gameThread = table.getGame();
-
 
     }
 }
