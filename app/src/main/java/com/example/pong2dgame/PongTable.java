@@ -6,15 +6,25 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
+import android.os.Handler;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
+import java.util.Random;
+
 public class PongTable extends SurfaceView implements SurfaceHolder.Callback{
+
+    private GameThread game;
+    private TextView status;
+    private TextView playerScore;
+    private TextView opponentScore;
 
     private Player mainPlayer;
     private Player opponent;
@@ -30,7 +40,7 @@ public class PongTable extends SurfaceView implements SurfaceHolder.Callback{
     private static float PHY_RACQUET_SPEED = 15.0f;
     private static float PHY_BALL_SPEED = 15.0f;
 
-    private float AiPortability; // To control the opponent movements
+    private float AiProbability; // To control the opponent movements
 
     private boolean moving; // checks if the ball moves
     private float lastTouchY;
@@ -52,7 +62,27 @@ public class PongTable extends SurfaceView implements SurfaceHolder.Callback{
         holder = getHolder();
         holder.addCallback(this);
 
-        // Game loop initialize
+        Handler statusHandle = new Handler(){
+            @Override
+            public void handleMessage(@NonNull Message msg) {
+                super.handleMessage(msg);
+                status.setVisibility(msg.getData().getInt("visibility"));
+                status.setText(msg.getData().getString("text"));
+            }
+        };
+
+        Handler scoreHandle = new Handler(){
+            @Override
+            public void handleMessage(@NonNull Message msg) {
+                super.handleMessage(msg);
+                playerScore.setText(msg.getData().getString("player"));
+                opponentScore.setText(msg.getData().getString("opponent"));
+            }
+        };
+
+        game = new GameThread(this.getContext(), holder, this,statusHandle, scoreHandle);
+
+
 
         TypedArray array = context.obtainStyledAttributes(attributeSet, R.styleable.PongTable);
         int racquetHeight = array.getInteger(R.styleable.PongTable_racketHeight, 340);
@@ -93,13 +123,13 @@ public class PongTable extends SurfaceView implements SurfaceHolder.Callback{
         tableBoundsPaint.setStyle(Paint.Style.STROKE);
         tableBoundsPaint.setStrokeWidth(15.f);
 
-        AiPortability = 0.8f;
+        AiProbability = 0.8f;
 
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
+    public void draw(Canvas canvas) {
+        super.draw(canvas);
         canvas.drawColor(ContextCompat.getColor(mainContext, R.color.table_color));
         canvas.drawRect(0,0, tableWidth, tableHeight, tableBoundsPaint);
 
@@ -114,7 +144,8 @@ public class PongTable extends SurfaceView implements SurfaceHolder.Callback{
 
     @Override
     public void surfaceCreated(@NonNull SurfaceHolder surfaceHolder) {
-
+        game.setRunning(true);
+        game.start();
     }
 
     @Override
@@ -123,11 +154,22 @@ public class PongTable extends SurfaceView implements SurfaceHolder.Callback{
         tableWidth = width;
         tableHeight = height;
 
-
+        game.setUpNewRound();
     }
 
     @Override
     public void surfaceDestroyed(@NonNull SurfaceHolder surfaceHolder) {
+
+        Boolean retry = true;
+        game.setRunning(false);
+        while(retry){
+            try {
+                game.join();
+                retry = false;
+            }catch (InterruptedException e){
+                e.printStackTrace();
+            }
+        }
 
     }
 
@@ -144,14 +186,64 @@ public class PongTable extends SurfaceView implements SurfaceHolder.Callback{
                     opponent.getBounds().top + PHY_RACQUET_SPEED);
         }
     }
+
+    public void update(Canvas canvas) {
+
+        // Collisions detetion code
+
+
+
+        if (new Random(System.currentTimeMillis()).nextFloat() < AiProbability){
+            doAi();
+        }
+        ball.moveBall(canvas);
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        return super.onTouchEvent(event);
+
+        if (!game.isSensorsOn()){
+            switch (event.getAction()){
+                case MotionEvent.ACTION_DOWN:
+                    if (game.isBetweenRounds()){
+                        game.setGameState(GameThread.STATE_RUNNING);
+                    }else{
+                        if (isTouchOnRacquet(event, mainPlayer)){
+                            moving = true;
+                            lastTouchY = event.getY();
+                        }
+                    }
+                break;
+
+                case MotionEvent.ACTION_MOVE:
+                    if (moving){
+                        float y = event.getY();
+                        float directionY = y - lastTouchY;
+                        lastTouchY = y;
+                        movePlayerRacquet(directionY, mainPlayer);
+                    }
+                break;
+
+                case MotionEvent.ACTION_UP:
+                    moving = false;
+                    break;
+            }
+        }else{
+            if (event.getAction() == MotionEvent.ACTION_DOWN){
+                if (game.isBetweenRounds()){
+                    game.setGameState(GameThread.STATE_RUNNING);
+                }
+            }
+        }
+
+        return true;
     }
 
     private boolean isTouchOnRacquet(MotionEvent event, Player player){
         return player.getBounds().contains(event.getX(),event.getY());
     }
+
+
 
     public void movePlayerRacquet(float directionY, Player player){
 
@@ -196,6 +288,18 @@ public class PongTable extends SurfaceView implements SurfaceHolder.Callback{
         ball.setCoordinate_y(tableHeight/2);
         ball.setVelocity_y(ball.getVelocity_y() / Math.abs(ball.getVelocity_y()) * PHY_BALL_SPEED);
         ball.setVelocity_x(ball.getVelocity_x() / Math.abs(ball.getVelocity_x()) * PHY_BALL_SPEED);
+    }
+
+    public void setScorePlayer(TextView view){
+        playerScore = view;
+    }
+
+    public void setOpponentScore (TextView view){
+        opponentScore = view;
+    }
+
+    public void setStatusView(TextView view){
+        status = view;
     }
 
     /* GETTERS AND SETTERS */
@@ -284,12 +388,12 @@ public class PongTable extends SurfaceView implements SurfaceHolder.Callback{
         PHY_BALL_SPEED = phyBallSpeed;
     }
 
-    public float getAiPortability() {
-        return AiPortability;
+    public float getAiProbability() {
+        return AiProbability;
     }
 
-    public void setAiPortability(float aiPortability) {
-        AiPortability = aiPortability;
+    public void setAiProbability(float aiProbability) {
+        AiProbability = aiProbability;
     }
 
     public boolean isMoving() {
@@ -306,5 +410,13 @@ public class PongTable extends SurfaceView implements SurfaceHolder.Callback{
 
     public void setLastTouchY(float lastTouchY) {
         this.lastTouchY = lastTouchY;
+    }
+
+    public GameThread getGame() {
+        return game;
+    }
+
+    public void setGame(GameThread game) {
+        this.game = game;
     }
 }
