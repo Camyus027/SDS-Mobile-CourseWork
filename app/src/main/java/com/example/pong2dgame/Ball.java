@@ -25,7 +25,7 @@ public class Ball {
 
     public void moveBall(Canvas canvas){
         coordinate_x += velocity_x;
-        coordinate_y +=velocity_y;
+        coordinate_y += velocity_y;
 
         // To ensure that the ball stays within the canvas limits
         if (coordinate_y < radius){
@@ -81,15 +81,4 @@ public class Ball {
         return radius;
     }
 
-    public void setRadius(int radius) {
-        this.radius = radius;
-    }
-
-    public Paint getPaint() {
-        return paint;
-    }
-
-    public void setPaint(Paint paint) {
-        this.paint = paint;
-    }
 }

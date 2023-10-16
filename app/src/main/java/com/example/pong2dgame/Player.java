@@ -5,9 +5,6 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 
 public class Player {
-
-    private String name;
-
     private int racquetWidth;
     private int racquetHeight;
     private int score;
@@ -41,28 +38,12 @@ public class Player {
 
     /* GETTERS AND SETTERS */
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public int getRacquetWidth() {
         return racquetWidth;
     }
 
-    public void setRacquetWidth(int racquetWidth) {
-        this.racquetWidth = racquetWidth;
-    }
-
     public int getRacquetHeight() {
         return racquetHeight;
-    }
-
-    public void setRacquetHeight(int racquetHeight) {
-        this.racquetHeight = racquetHeight;
     }
 
     public int getScore() {
@@ -73,19 +54,8 @@ public class Player {
         this.score = score;
     }
 
-    public Paint getPaint() {
-        return paint;
-    }
-
-    public void setPaint(Paint paint) {
-        this.paint = paint;
-    }
-
     public RectF getBounds() {
         return bounds;
     }
 
-    public void setBounds(RectF bounds) {
-        this.bounds = bounds;
-    }
 }

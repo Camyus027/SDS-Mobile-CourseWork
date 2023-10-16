@@ -203,16 +203,16 @@ public class PongTable extends SurfaceView implements SurfaceHolder.Callback{
             ball.setVelocity_y(-ball.getVelocity_y());
         } else if (checkCollisionsLefttWall()) {
             // A ball collides in our field
-            game.setGameState(GameThread.STATE_LOSE);
+            game.setState(GameThread.STATE_LOSE);
             return;
         } else if (checkCollisionsRightWall()) {
             // We get a point!
-            game.setGameState(GameThread.STATE_WIN);
+            game.setState(GameThread.STATE_WIN);
             return;
         }
 
-
-        if (new Random(System.currentTimeMillis()).nextFloat() < AiProbability){
+        float random = new Random(System.currentTimeMillis()).nextFloat();
+        if (random < AiProbability){
             doAi();
         }
         ball.moveBall(canvas);
@@ -244,9 +244,9 @@ public class PongTable extends SurfaceView implements SurfaceHolder.Callback{
         ball.setVelocity_x(-ball.getVelocity_x() * 1.05f);
         if (player == mainPlayer){
             ball.setCoordinate_x(mainPlayer.getBounds().right + ball.getRadius());
-        }else{
+        }else if (player == opponent){
             ball.setCoordinate_x(opponent.getBounds().left - ball.getRadius());
-            PHY_RACQUET_SPEED = PHY_RACQUET_SPEED * 1.03f;
+            PHY_RACQUET_SPEED = PHY_RACQUET_SPEED * 1.05f;
         }
     }
 
@@ -257,7 +257,7 @@ public class PongTable extends SurfaceView implements SurfaceHolder.Callback{
             switch (event.getAction()){
                 case MotionEvent.ACTION_DOWN:
                     if (game.isBetweenRounds()){
-                        game.setGameState(GameThread.STATE_RUNNING);
+                        game.setState(GameThread.STATE_RUNNING);
                     }else{
                         if (isTouchOnRacquet(event, mainPlayer)){
                             moving = true;
@@ -282,7 +282,7 @@ public class PongTable extends SurfaceView implements SurfaceHolder.Callback{
         }else{
             if (event.getAction() == MotionEvent.ACTION_DOWN){
                 if (game.isBetweenRounds()){
-                    game.setGameState(GameThread.STATE_RUNNING);
+                    game.setState(GameThread.STATE_RUNNING);
                 }
             }
         }
@@ -309,7 +309,7 @@ public class PongTable extends SurfaceView implements SurfaceHolder.Callback{
         if (left < 2){
             left = 2;
         } else if (left + player.getRacquetWidth() >= tableWidth -2){
-            top = tableWidth - player.getRacquetWidth() -2;
+            left = tableWidth - player.getRacquetWidth() -2;
         }
 
         if (top < 0){
@@ -360,115 +360,16 @@ public class PongTable extends SurfaceView implements SurfaceHolder.Callback{
         return mainPlayer;
     }
 
-    public void setMainPlayer(Player mainPlayer) {
-        this.mainPlayer = mainPlayer;
-    }
-
     public Player getOpponent() {
         return opponent;
-    }
-
-    public void setOpponent(Player opponent) {
-        this.opponent = opponent;
-    }
-
-    public Ball getBall() {
-        return ball;
-    }
-
-    public void setBall(Ball ball) {
-        this.ball = ball;
-    }
-
-    public Paint getNetPaint() {
-        return netPaint;
-    }
-
-    public void setNetPaint(Paint netPaint) {
-        this.netPaint = netPaint;
-    }
-
-    public Paint getTableBoundsPaint() {
-        return tableBoundsPaint;
-    }
-
-    public void setTableBoundsPaint(Paint tableBoundsPaint) {
-        this.tableBoundsPaint = tableBoundsPaint;
-    }
-
-    public int getTableWidth() {
-        return tableWidth;
-    }
-
-    public void setTableWidth(int tableWidth) {
-        this.tableWidth = tableWidth;
-    }
-
-    public int getTableHeight() {
-        return tableHeight;
-    }
-
-    public void setTableHeight(int tableHeight) {
-        this.tableHeight = tableHeight;
-    }
-
-    public Context getMainContext() {
-        return mainContext;
-    }
-
-    public void setMainContext(Context mainContext) {
-        this.mainContext = mainContext;
-    }
-
-    public void setHolder(SurfaceHolder holder) {
-        this.holder = holder;
-    }
-
-    public static float getPhyRacquetSpeed() {
-        return PHY_RACQUET_SPEED;
-    }
-
-    public static void setPhyRacquetSpeed(float phyRacquetSpeed) {
-        PHY_RACQUET_SPEED = phyRacquetSpeed;
     }
 
     public static float getPhyBallSpeed() {
         return PHY_BALL_SPEED;
     }
 
-    public static void setPhyBallSpeed(float phyBallSpeed) {
-        PHY_BALL_SPEED = phyBallSpeed;
-    }
-
-    public float getAiProbability() {
-        return AiProbability;
-    }
-
-    public void setAiProbability(float aiProbability) {
-        AiProbability = aiProbability;
-    }
-
-    public boolean isMoving() {
-        return moving;
-    }
-
-    public void setMoving(boolean moving) {
-        this.moving = moving;
-    }
-
-    public float getLastTouchY() {
-        return lastTouchY;
-    }
-
-    public void setLastTouchY(float lastTouchY) {
-        this.lastTouchY = lastTouchY;
-    }
-
     public GameThread getGame() {
         return game;
     }
 
-    public void setGame(GameThread game) {
-        this.game = game;
-    }
 }
